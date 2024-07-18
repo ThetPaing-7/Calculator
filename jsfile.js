@@ -1,6 +1,71 @@
-let firstInputNumber;
-let secondInputNumber;
-let operator;
+let display = document.querySelector('#displayArea');
+let calculatorKeys = document.querySelector('.calculatorBody');
+
+let firstInputNumber = '';
+let operator = '';
+let secondInputNumber = '';
+
+
+calculatorKeys.addEventListener("click", Event => {
+    if(!Event.target.closest('button')) return
+    const key = Event.target;
+    const keyValue = key.textContent;
+    const displayValue = display.textContent; 
+
+   if(key.dataset.type === 'number' || key.dataset.type === 'number-zero'){
+    if(operator === ''){
+        firstInputNumber += keyValue;
+    }else{
+        secondInputNumber += keyValue;
+    }
+    display.textContent += keyValue;
+   }else if(keyValue === "C"){
+    // Clear display and rest values
+    display.textContent = "";
+    firstInputNumber = "";
+    operator = "";
+    secondInputNumber = "";
+   }else if(keyValue === "="){
+    if (firstInputNumber !== '' && operator !== '' && secondInputNumber !== '') {
+        // Calculate result if both inputs and operator are provided
+        const result = operate(firstInputNumber, secondInputNumber, operator);
+        display.textContent = result;
+        firstInputNumber = result;  // Store result for future calculations
+        operator = "";
+        secondInputNumber = "";
+    }
+
+   }
+   else{
+    if(firstInputNumber !== ""){
+        operator = keyValue;
+        display.textContent += `${operator}`;
+    }
+   }
+   
+});
+
+
+//Operate Function
+const operate = (firstInputNumber, secondInputNumber, operator) => {
+    firstInputNumber = parseFloat(firstInputNumber);
+    secondInputNumber = parseFloat(secondInputNumber);
+    
+    switch (operator) {
+        case "+":
+            return addedNumber(firstInputNumber, secondInputNumber);
+        case "-":
+            return subtractedNumber(firstInputNumber, secondInputNumber);
+        case "*":
+            return multipliedNumber(firstInputNumber, secondInputNumber);
+        case "/":
+            return dividedNumber(firstInputNumber, secondInputNumber);
+        default:
+            return "Error";
+    }
+};
+
+
 
 
 
