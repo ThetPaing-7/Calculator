@@ -41,12 +41,12 @@
 
 .calculatorBody{
     width: auto;
-    height: 400px;
+    height: 450px;
     background-color: #FFF8F3;
     margin: 0 10px;
     border-radius: 20px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
@@ -63,6 +63,31 @@
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+.calculatorBody #clear{
+    width: 50%;
+}
+
+.calculatorBody #add{
+    background-color: red;
+}
+
+.calculatorBody #divide{
+    background-color: antiquewhite;
+}
+
+.calculatorBody #multiply{
+    background-color: thistle;
+}
+
+.calculatorBody #subtract{
+    background-color: aquamarine;
+}
+
+.calculatorBody #clear{
+    color: rgba(255, 0, 0, 0.661);
+    font-size: medium;
+    font-weight: bold;
+}
 
 
 

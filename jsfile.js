@@ -4,97 +4,110 @@ let calculatorKeys = document.querySelector('.calculatorBody');
 let firstInputNumber = '';
 let operator = '';
 let secondInputNumber = '';
+let resultDisplayed = false;
+let result;
 
-
-calculatorKeys.addEventListener("click", Event => {
-    if(!Event.target.closest('button')) return
-    const key = Event.target;
+calculatorKeys.addEventListener("click", event => {
+    if (!event.target.closest('button')) return;
+    const key = event.target;
     const keyValue = key.textContent;
-    const displayValue = display.textContent; 
 
-   if(key.dataset.type === 'number' || key.dataset.type === 'number-zero'){
-    if(operator === ''){
-        firstInputNumber += keyValue;
-    }else{
-        secondInputNumber += keyValue;
-    }
-    display.textContent += keyValue;
-   }else if(keyValue === "C"){
-    // Clear display and rest values
-    display.textContent = "";
-    firstInputNumber = "";
-    operator = "";
-    secondInputNumber = "";
-   }else if(keyValue === "="){
-    if (firstInputNumber !== '' && operator !== '' && secondInputNumber !== '') {
-        // Calculate result if both inputs and operator are provided
-        const result = operate(firstInputNumber, secondInputNumber, operator);
-        display.textContent = result;
-        firstInputNumber = result;  // Store result for future calculations
-        operator = "";
-        secondInputNumber = "";
-    }
+    if (key.dataset.type === 'number') {
+        if (resultDisplayed) {
+            operator = '';
+            secondInputNumber = '';
+            resultDisplayed = false;
+            display.textContent = '';
+        }
+        if (operator === '' && result === ''){
+            firstInputNumber = result;
+            display.textContent = firstInputNumber;
+        }else if(operator === '') {
+            firstInputNumber += keyValue;
+            display.textContent += keyValue;
+        } else {
+            secondInputNumber += keyValue;
+            display.textContent += keyValue;
+        }
+    } else if (key.dataset.type === 'number-decimal') {
+        if (resultDisplayed) {
+            operator = '';
+            secondInputNumber = '';
+            resultDisplayed = false;
+            display.textContent = '0.'; 
+        }
 
-   }
-   else{
-    if(firstInputNumber !== ""){
-        operator = keyValue;
-        display.textContent += `${operator}`;
+        if (operator === '') {
+            if (!firstInputNumber.includes('.')) {
+                firstInputNumber += '.';
+                display.textContent += '.';
+            }
+        } else {
+            if (!secondInputNumber.includes('.')) {
+                secondInputNumber += '.';
+                display.textContent += '.';
+            }
+        }
+    } else if (keyValue === "C") {
+        if (secondInputNumber !== '') {
+            display.textContent = display.textContent.slice(0, -secondInputNumber.length);
+            secondInputNumber = '';
+        } else if (operator !== '') {
+            display.textContent = display.textContent.slice(0, -1);
+            operator = '';
+        } else {
+            display.textContent = '';
+            firstInputNumber = '';
+            operator = '';
+            secondInputNumber = '';
+            resultDisplayed = false;
+        }
+    } else if (keyValue === "=") {
+        if (firstInputNumber !== '' && operator !== '' && secondInputNumber !== '') {
+            const result = operate(parseFloat(firstInputNumber), parseFloat(secondInputNumber), operator);
+            display.textContent = result;
+          
+            firstInputNumber = result.toString();
+            operator = '';
+            secondInputNumber = '';
+            resultDisplayed = true; 
+        }
+    } else {
+        if (firstInputNumber !== "" && !operator && !resultDisplayed) {
+            operator = keyValue;
+            display.textContent += `${operator}`;
+        } else if (firstInputNumber !== "" && operator !== "" && secondInputNumber !== "") {
+            result = operate(parseFloat(firstInputNumber), parseFloat(secondInputNumber), operator);
+            display.textContent = result;
+            firstInputNumber = result.toString();
+            operator = keyValue;
+            secondInputNumber = '';
+            display.textContent += `${operator}`;
+            resultDisplayed = false;
+        }else if(resultDisplayed && firstInputNumber !== ""){
+            operator = keyValue;
+            display.textContent = `${firstInputNumber}${operator}`;
+            resultDisplayed = false; 
+        }
     }
-   }
-   
 });
 
-
-//Operate Function
-const operate = (firstInputNumber, secondInputNumber, operator) => {
-    firstInputNumber = parseFloat(firstInputNumber);
-    secondInputNumber = parseFloat(secondInputNumber);
-    
+// Function to perform arithmetic operations
+const operate = (num1, num2, operator) => {
     switch (operator) {
         case "+":
-            return addedNumber(firstInputNumber, secondInputNumber);
+            return num1 + num2;
         case "-":
-            return subtractedNumber(firstInputNumber, secondInputNumber);
+            return num1 - num2;
         case "*":
-            return multipliedNumber(firstInputNumber, secondInputNumber);
+            return num1 * num2;
         case "/":
-            return dividedNumber(firstInputNumber, secondInputNumber);
+            if (num2 === 0) {
+                return "Error: Divide by zero";
+            } else {
+                return num1 / num2;
+            }
         default:
             return "Error";
     }
 };
-
-
-
-
-
-
-// Operate function
-(firstInputNumber,secondInputNumber,operator) =>{
-    if(operator === "+"){
-        addedNumber(firstInputNumber,secondInputNumber);}
-    else if(operator === "-")
-        subtractedNumber(firstInputNumber,secondInputNumber);
-    else if(operator === "*")
-        multipliedNumber(firstInputNumber,secondInputNumber);
-    else if(operator === "/")
-        dividedNumber(firstInputNumber,secondInputNumber);
-    else{
-        return "Hello Mate";
-    }
-        
-}
-
-
-// Add function
-let addedNumber = (firstNumber, secondNumber) => { firstNumber + secondNumber};
-
-// subtract function
-let subtractedNumber = (firstNumber, secondNumber) =>{ firstNumber - secondNumber};
-
-//multiply function
-let multipliedNumber = (firstNumber, secondNumber) => { firstNumber * secondNumber};
-
-// divide function
-let dividedNumber = (firstNumber, secondNumber) => {firstNumber / secondNumber};
